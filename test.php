@@ -79,13 +79,12 @@ foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure
          else if($element->tag== 'table')
          {
          	
-        foreach ($element->find('td') as $row) {
-        	echo $row->innertext. '<br>';
-
-        	 foreach ($row->find('tr') as $rows) {
-        	echo $rows->innertext. '<br>';
-        }
-        }
+        foreach ($element->find('tr') as $row) {
+             foreach ($row->find('td') as $rows) {
+        	echo  $rows->innertext. ' &nbsp &nbsp &nbsp &nbsp';
+        	}
+        	echo '<br>';
+       	 }
          }
          echo $element->tag . '<br>' ;
 
