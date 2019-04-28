@@ -11,41 +11,12 @@ $opts = [
                 ]
         ]
 ];
-
+$get_url=$_GET["url"];
+$get_country=$_GET["country"];
+$get_district=$_GET["district"];
 $context = stream_context_create($opts);
-$html = file_get_html('https://adarbepari.com/tikoil-alpona-village-chapainawabganj',false,$context);
+$html = file_get_html($get_url,false,$context);
 
-// $html = file_get_html('https://ruchiexplorelimitless.com/bn/%E0%A6%B8%E0%A6%BE%E0%A6%87%E0%A6%95%E0%A7%87%E0%A6%B2%E0%A7%87%E0%A6%B0-%E0%A6%B8%E0%A6%BE%E0%A6%A5%E0%A7%87%E0%A6%87-%E0%A6%A5%E0%A6%BE%E0%A6%95%E0%A6%A4%E0%A7%87-%E0%A6%B9%E0%A6%AC%E0%A7%87/');
-
-//var_dump($f);
-//$html->clear();
-//unset($html);
-// foreach ( $html->find('div[class=entry-content] p ') as $element) {
-
-//           echo ($element->innertext);
-//           echo "<br>";
-//           echo "<br>";
-
-        
-// }
-// foreach ( $html->find('div[class="entry-content"] p') as $element) {
-          
-//           echo ($element);
-//           echo "<br>";
-//           echo "<br>";
-
-        
-// }
-// TODO find image
-// foreach ( $html->find('figure[class="aligncenter"] img') as $element) {
-          
-//           //echo ($element->dump());
-//           echo ($element->src);
-//           echo "<br>";
-//           echo "<br>";
-
-        
-// }
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -60,11 +31,17 @@ if ($conn->connect_error) {
 //echo "Connected successfully";
 $details=array();
 $image=array();
+$tab=array();
 $title;
-foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure[class="aligncenter"] img,h1,header[class="entry-title"] h2,div[class="entry-content"] h3,div[class="entry-content"] h4, div[class="entry-content"] table[class="wp-block-table"]') as $element) {
+foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure[class="aligncenter"] img,h1,header[class="entry-title"] h2,div[class="entry-content"] h3,div[class="entry-content"] h4, div[class="entry-content"] table[class="wp-block-table"],div[class="location"] a') as $element) {
           if($element->tag=='h1')
           {
            $title=$element->innertext;
+          }
+          if($element->tag=='a')
+          {
+			$title.= " -> ".$element->innertext;
+      
           }
          if($element->tag=='p'|| $element->tag=='h2' || $element->tag=='h3' || $element->tag=='h4' )
          {
@@ -80,31 +57,33 @@ foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure
          {
          	
         foreach ($element->find('tr') as $row) {
+        	 $go="tbl ";
              foreach ($row->find('td') as $rows) {
-        	echo  $rows->innertext. ' &nbsp &nbsp &nbsp &nbsp';
+        	$go.=strip_tags($rows->innertext).'|';
         	}
-        	echo '<br>';
+        	$go.="||";
+        	array_push($details,$go);
        	 }
          }
-         echo $element->tag . '<br>' ;
+
 
          
 }
-die();
 //print_r($details);die();
 
 //$c=implode('|',$details);
-$c=json_encode($details,JSON_UNESCAPED_UNICODE);
+// $c=json_encode($details,JSON_UNESCAPED_UNICODE);
+$c=serialize($details);
 // echo $c;
 // echo "-----------------------------------------------";
 // echo implode('|',unserialize($c));
 //die();
 //$img=implode('|',$image);
-$img=json_encode($image);
+$img=serialize($image);
 // $sql = "INSERT INTO posts (post_title, post_details, post_map,post_image,country_id,district_id)
 // VALUES ('"$title"','"$details"', 'post_map','"$post_image"',1001,1002)";
 $sql = "INSERT INTO posts (id,post_title, post_details, post_map,post_image,country_id,district_id)
-VALUES ('','$title','$c', 'post_map','$img',1001,1002)";
+VALUES ('','$title','$c', 'post_map','$img',$get_country,$get_district)";
 if ($conn->query($sql) === TRUE) {
     echo "New record created successfully";
 } else {
