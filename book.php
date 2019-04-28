@@ -1,9 +1,8 @@
 <?php
-
-include('simple_html_dom.php');
-
-// Create DOM from URL or file
-$opts = [
+include_once('simple_html_dom.php');
+  class Book {
+   function setPrice($url,$country,$district){
+       $opts = [
         'http' => [
                 'method' => 'GET',
                 'header' => [
@@ -22,11 +21,11 @@ $opts = [
 // }
 //die();
 
-$get_url=$_GET["url"];
-$get_country=$_GET["country"];
-$get_district=$_GET["district"];
+$get_url=$url;
+$get_country=$country;
+$get_district=$district;
 
-echo $get_url;die();
+//echo $get_url;die();
 $context = stream_context_create($opts);
 $html = file_get_html($get_url,false,$context);
 
@@ -108,7 +107,7 @@ if ($conn->query($sql) === TRUE) {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }
 
-$conn->close();
-
-
-?>
+$conn->close(); 
+      }
+  }
+   ?>
