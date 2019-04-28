@@ -33,7 +33,7 @@ $details=array();
 $image=array();
 $tab=array();
 $title;
-foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure[class="aligncenter"] img,h1,header[class="entry-title"] h2,div[class="entry-content"] h3,div[class="entry-content"] h4, div[class="entry-content"] table[class="wp-block-table"],div[class="location"] a') as $element) {
+foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure[class="aligncenter"] img,h1,header[class="entry-title"] h2,div[class="entry-content"] h3,div[class="entry-content"] h4, div[class="entry-content"] table[class="wp-block-table"],div[class="location"] a,div[class="entry-content"] ul') as $element) {
           if($element->tag=='h1')
           {
            $title=$element->innertext;
@@ -64,10 +64,15 @@ foreach ( $html->find('div[class="entry-content"] p,div[class="item"] img,figure
         	$go.="||";
         	array_push($details,$go);
        	 }
-         }
+         }else if($element->tag=='ul')
+         {
+         	foreach ($element->find('li') as $row) {
+        
+        	 $f=strip_tags($row->innertext);
+         	array_push($details,$f);
 
-
-         
+       	 }
+         }       
 }
 //print_r($details);die();
 
